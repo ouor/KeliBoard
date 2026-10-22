@@ -7,7 +7,7 @@ It keeps the privacy-conscious, offline, and deeply customizable foundation of H
 
 Korean support is a flagship feature, not the limit of the project. KeliBoard is built for everyone who wants a dependable, configurable Android keyboard.
 
-[Download the latest APK](https://github.com/GPLaider/KeliBoard/releases/latest)
+[Download the latest APK](https://github.com/ouor/KeliBoard/releases/latest)
 
 ## Why KeliBoard?
 
@@ -75,15 +75,15 @@ See [layouts.md](layouts.md) for custom layout documentation. The upstream [Heli
 
 ## Installation
 
-Download the current build from [GitHub Releases](https://github.com/GPLaider/KeliBoard/releases/latest).
+Download the current build from [GitHub Releases](https://github.com/ouor/KeliBoard/releases/latest).
 
-KeliBoard 4.0-ko-preview5 and later use the independent `io.github.gplaider.keliboard` application ID. They can coexist with official HeliBoard and earlier KeliBoard previews.
+KeliBoard 4.1.0 and later use the `io.github.ouor.keliboard` application ID and their own signing key. They install as a separate app next to official HeliBoard and earlier KeliBoard builds (`io.github.gplaider.keliboard`), so they cannot update those in place.
 
 Android does not migrate app data between application IDs. Before switching, back up settings in the earlier app and restore that backup in KeliBoard.
 
 ## Reporting issues
 
-Report KeliBoard bugs and feature requests in [KeliBoard Issues](https://github.com/GPLaider/KeliBoard/issues).
+Report KeliBoard bugs and feature requests in [KeliBoard Issues](https://github.com/ouor/KeliBoard/issues).
 
 Please include:
 

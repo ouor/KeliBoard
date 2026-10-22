@@ -1,0 +1,3 @@
+Added opt-in voice input with your own speech-to-text API key and optional AI cleanup.
+New default look: flat rounded keys in system colors, a tidier toolbar and clipboard view, and a visible language key.
+New app ID io.github.ouor.keliboard: installs as a separate app.

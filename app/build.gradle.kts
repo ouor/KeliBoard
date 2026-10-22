@@ -1,5 +1,6 @@
 import com.android.build.api.variant.ApplicationVariant
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -8,15 +9,20 @@ plugins {
     kotlin("plugin.compose") version "2.3.20"
 }
 
+// release signing, see signing/SIGNING.md; the keystore and its password are not in git
+val ksProps = Properties().apply {
+    rootProject.file("signing/keystore.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
+
 android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "io.github.gplaider.keliboard"
+        applicationId = "io.github.ouor.keliboard"
         minSdk = 21
         targetSdk = 36
-        versionCode = 4019
-        versionName = "4.0.1"
+        versionCode = 4020
+        versionName = "4.1.0"
         ndk {
             abiFilters.clear()
             abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
@@ -24,8 +30,19 @@ android {
         proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file("signing/release.p12")
+            storeType = "PKCS12"
+            storePassword = ksProps.getProperty("storePassword")
+            keyAlias = "release"
+            keyPassword = ksProps.getProperty("storePassword")
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = false
             isDebuggable = false

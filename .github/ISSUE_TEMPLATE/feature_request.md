@@ -4,7 +4,7 @@ about: Suggest an idea for this project
 labels: enhancement
 ---
 
-Please see the issue reporting guidelines: https://github.com/GPLaider/KeliBoard#reporting-issues
+Please see the issue reporting guidelines: https://github.com/ouor/KeliBoard#reporting-issues
 tl;dr:
 * search for duplicates, also in closed issues
 * check FAQ / hidden features
