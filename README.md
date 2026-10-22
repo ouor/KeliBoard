@@ -16,7 +16,7 @@ Korean support is a flagship feature, not the limit of the project. KeliBoard is
 - UI and theme fixes that improve visibility and consistency
 - Better punctuation, suggestion, popup-key, and emoji-search behavior
 - First-class Korean support, including a Samsung-style Cheonjiin layout
-- Fully offline operation with no internet permission
+- Works fully offline; the internet is only used by opt-in voice input with your own speech-to-text API key (OpenAI, Groq, Deepgram, AssemblyAI or any OpenAI-compatible server), with optional AI cleanup
 - The customization and privacy model inherited from HeliBoard
 
 ## First-class Korean support
