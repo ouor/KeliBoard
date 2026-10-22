@@ -93,14 +93,14 @@ fun createVoiceInputSettings(context: Context) = listOf(
         ListPreference(setting, items, Defaults.PREF_VOICE_STT_PROVIDER)
     },
     Setting(context, Settings.PREF_VOICE_STT_API_KEY, R.string.voice_input_api_key) { setting ->
-        ApiKeyPreference(setting, VoiceSettings.sttProvider(LocalContext.current.prefs()))
+        ApiKeyPreference(setting, currentSttProvider())
     },
     Setting(context, Settings.PREF_VOICE_STT_BASE_URL, R.string.voice_input_base_url) { setting ->
-        val provider = VoiceSettings.sttProvider(LocalContext.current.prefs())
+        val provider = currentSttProvider()
         PerProviderTextPreference(setting, provider, provider.defaultBaseUrl, ::isValidUrl)
     },
     Setting(context, Settings.PREF_VOICE_STT_MODEL, R.string.voice_input_model) { setting ->
-        val provider = VoiceSettings.sttProvider(LocalContext.current.prefs())
+        val provider = currentSttProvider()
         PerProviderTextPreference(setting, provider, provider.defaultModel)
     },
     Setting(context, Settings.PREF_VOICE_USE_KEYBOARD_LANGUAGE,
@@ -116,20 +116,35 @@ fun createVoiceInputSettings(context: Context) = listOf(
         ListPreference(setting, items, Defaults.PREF_VOICE_LLM_PROVIDER)
     },
     Setting(context, Settings.PREF_VOICE_LLM_API_KEY, R.string.voice_input_api_key) { setting ->
-        ApiKeyPreference(setting, VoiceSettings.llmProvider(LocalContext.current.prefs()))
+        ApiKeyPreference(setting, currentLlmProvider())
     },
     Setting(context, Settings.PREF_VOICE_LLM_BASE_URL, R.string.voice_input_base_url) { setting ->
-        val provider = VoiceSettings.llmProvider(LocalContext.current.prefs())
+        val provider = currentLlmProvider()
         PerProviderTextPreference(setting, provider, provider.defaultBaseUrl, ::isValidUrl)
     },
     Setting(context, Settings.PREF_VOICE_LLM_MODEL, R.string.voice_input_model) { setting ->
-        val provider = VoiceSettings.llmProvider(LocalContext.current.prefs())
+        val provider = currentLlmProvider()
         PerProviderTextPreference(setting, provider, provider.defaultModel)
     },
     Setting(context, Settings.PREF_VOICE_LLM_PROMPT, R.string.voice_input_llm_prompt) { setting ->
         TextPreference(setting, setting.key, TextPolisher.DEFAULT_PROMPT, singleLine = false, showValue = false)
     },
 )
+
+// these rows depend on the selected provider, so they must recompose when it changes
+@Composable
+private fun currentSttProvider(): SttProvider {
+    val ctx = LocalContext.current
+    (ctx.getActivity() as? SettingsActivity)?.prefChanged?.collectAsState()?.value
+    return VoiceSettings.sttProvider(ctx.prefs())
+}
+
+@Composable
+private fun currentLlmProvider(): LlmProvider {
+    val ctx = LocalContext.current
+    (ctx.getActivity() as? SettingsActivity)?.prefChanged?.collectAsState()?.value
+    return VoiceSettings.llmProvider(ctx.prefs())
+}
 
 private fun isValidUrl(url: String) = url.isBlank() || url.startsWith("https://") || url.startsWith("http://")
 
