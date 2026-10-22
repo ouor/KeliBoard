@@ -92,6 +92,10 @@ class DynamicColors(context: Context, override val themeStyle: String, override 
     private val background = getBackground(context)
     private val keyBackground = getKeyBackground(context)
     private val functionalKey = getFunctionalKey(context)
+    /** saturated accent for the action (enter) key, so the white icon stands out like in Fossify Keyboard */
+    private val actionKey = ContextCompat.getColor(context,
+        if (isNight) android.R.color.system_accent1_500 else android.R.color.system_accent1_600)
+    private val adjustedActionKey = if (isNight) brighten(actionKey) else darken(actionKey)
     private val spaceBar = getKeyBackground(context)
     private val keyText = getKeyText(context)
     private val keyHintText = getKeyHintText(context)
@@ -226,13 +230,13 @@ class DynamicColors(context: Context, override val themeStyle: String, override 
                 if (!isNight) pressedStateList(adjustedBackground, keyBackground)
                 else pressedStateList(adjustedKeyBackground, keyBackground)
 
+            // functional keys look like normal keys, as in Fossify Keyboard
             functionalKeyStateList =
-                if (!isNight) pressedStateList(doubleAdjustedFunctionalKey, functionalKey)
+                if (themeStyle != STYLE_HOLO) keyStateList
+                else if (!isNight) pressedStateList(doubleAdjustedFunctionalKey, functionalKey)
                 else pressedStateList(functionalKey, doubleAdjustedKeyBackground)
 
-            actionKeyStateList =
-                if (!isNight) pressedStateList(gesture, accent)
-                else pressedStateList(doubleAdjustedAccent, accent)
+            actionKeyStateList = pressedStateList(adjustedActionKey, actionKey)
 
             spaceBarStateList =
                 if (themeStyle == STYLE_HOLO) pressedStateList(spaceBar, spaceBar)
@@ -254,8 +258,7 @@ class DynamicColors(context: Context, override val themeStyle: String, override 
 
             actionKeyStateList =
                 if (themeStyle == STYLE_HOLO) pressedStateList(accent, Color.TRANSPARENT)
-                else if (!isNight) pressedStateList(gesture, accent)
-                else pressedStateList(doubleAdjustedAccent, accent)
+                else pressedStateList(adjustedActionKey, actionKey)
 
             spaceBarStateList =
                 if (!isNight) pressedStateList(gesture, adjustedFunctionalKey)
@@ -266,14 +269,14 @@ class DynamicColors(context: Context, override val themeStyle: String, override 
         actionKeyIconColorFilter = when {
             themeStyle == STYLE_HOLO -> keyTextFilter
             // the white icon may not have enough contrast, and can't be adjusted by the user
-            needsDarkActionKeyIcon(accent) -> colorFilter(Color.DKGRAY)
+            needsDarkActionKeyIcon(actionKey) -> colorFilter(Color.DKGRAY)
             else -> null
         }
     }
 
     override fun get(color: ColorType): Int = when (color) {
-        TOOL_BAR_KEY_ENABLED_BACKGROUND, EMOJI_CATEGORY_SELECTED, ACTION_KEY_BACKGROUND,
-        CLIPBOARD_PIN -> accent
+        TOOL_BAR_KEY_ENABLED_BACKGROUND, EMOJI_CATEGORY_SELECTED, CLIPBOARD_PIN -> accent
+        ACTION_KEY_BACKGROUND -> actionKey
         AUTOFILL_BACKGROUND_CHIP, GESTURE_PREVIEW, POPUP_KEYS_BACKGROUND, MORE_SUGGESTIONS_BACKGROUND, KEY_PREVIEW_BACKGROUND -> adjustedBackground
         TOOL_BAR_EXPAND_KEY_BACKGROUND -> if (!isNight) accent else doubleAdjustedBackground
         GESTURE_TRAIL -> gesture
@@ -286,7 +289,7 @@ class DynamicColors(context: Context, override val themeStyle: String, override 
         SPACE_BAR_BACKGROUND -> spaceBar
         MORE_SUGGESTIONS_WORD_BACKGROUND, MAIN_BACKGROUND -> background
         KEY_BACKGROUND -> keyBackground
-        ACTION_KEY_POPUP_KEYS_BACKGROUND -> if (themeStyle == STYLE_HOLO) adjustedBackground else accent
+        ACTION_KEY_POPUP_KEYS_BACKGROUND -> if (themeStyle == STYLE_HOLO) adjustedBackground else actionKey
         STRIP_BACKGROUND -> if (!hasKeyBorders && themeStyle == STYLE_MATERIAL) adjustedBackground else background
         CLIPBOARD_SUGGESTION_BACKGROUND -> keyBackground
         NAVIGATION_BAR -> navBar
