@@ -29,9 +29,11 @@ object SpeechToText {
     }
 
     internal fun openAiRequest(config: SttConfig, wav: ByteArray): VoiceRequest {
-        val fields = linkedMapOf("model" to config.model, "response_format" to "json")
-        // gpt-transcribe takes a list of languages instead of a single one
-        config.language?.let { fields[if (config.model.startsWith("gpt-transcribe")) "languages[]" else "language"] = it }
+        val gptTranscribe = config.model.startsWith("gpt-transcribe")
+        val fields = linkedMapOf("model" to config.model)
+        // gpt-transcribe documents no response_format values (it returns json), and takes a list of languages
+        if (!gptTranscribe) fields["response_format"] = "json"
+        config.language?.let { fields[if (gptTranscribe) "languages[]" else "language"] = it }
         val (contentType, body) = multipart(fields, "file", "audio.wav", "audio/wav", wav)
         val headers = mutableMapOf("Content-Type" to contentType)
         if (config.apiKey.isNotEmpty()) headers["Authorization"] = "Bearer ${config.apiKey}"
@@ -77,7 +79,9 @@ object SpeechToText {
         val body = JSONObject().put("audio_url", audioUrl)
         val models = if (config.model.isNotEmpty()) listOf(config.model) else ASSEMBLYAI_DEFAULT_MODELS
         body.put("speech_models", JSONArray(models))
-        if (config.language == null) body.put("language_detection", true)
+        // a fixed language_code isn't documented to fall back between the default models (universal-3-5-pro lacks
+        // e.g. Korean), so the default list detects the language, as AssemblyAI's docs show for that case
+        if (config.language == null || config.model.isEmpty()) body.put("language_detection", true)
         else body.put("language_code", config.language)
         val headers = mapOf("Authorization" to config.apiKey, "Content-Type" to "application/json")
         return VoiceRequest("${config.baseUrl.trimEnd('/')}/transcript", headers, body.toString().toByteArray())

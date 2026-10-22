@@ -32,6 +32,7 @@ class VoiceRequestsTest {
         val body = String(request.body!!, Charsets.ISO_8859_1)
         assertTrue(body.contains("name=\"model\"\r\n\r\ngpt-transcribe\r\n"))
         assertTrue(body.contains("name=\"languages[]\"\r\n\r\nko\r\n"))
+        assertFalse(body.contains("name=\"response_format\""))
         val whisper = String(SpeechToText.openAiRequest(stt(SttProvider.GROQ), wav).body!!, Charsets.ISO_8859_1)
         assertTrue(whisper.contains("name=\"language\"\r\n\r\nko\r\n"))
         assertTrue(body.contains("filename=\"audio.wav\""))
@@ -58,7 +59,10 @@ class VoiceRequestsTest {
     @Test fun assemblyAiJobAndPolling() {
         val body = JSONObject(String(SpeechToText.assemblyAiTranscriptRequest(stt(SttProvider.ASSEMBLYAI), "u").body!!))
         assertEquals("u", body.getString("audio_url"))
-        assertEquals("ko", body.getString("language_code"))
+        assertTrue(body.getBoolean("language_detection")) // default model list detects the language
+        val fixed = JSONObject(String(SpeechToText.assemblyAiTranscriptRequest(
+            SttConfig(SttProvider.ASSEMBLYAI, "u", "universal-2", "k", "ko"), "u").body!!))
+        assertEquals("ko", fixed.getString("language_code"))
         assertEquals("""["universal-3-5-pro","universal-2"]""", body.getJSONArray("speech_models").toString())
         assertNull(SpeechToText.parseAssemblyAi(JSONObject("""{"status":"processing"}""")))
         assertEquals("hi", SpeechToText.parseAssemblyAi(JSONObject("""{"status":"completed","text":"hi"}""")))
@@ -92,7 +96,7 @@ class VoiceRequestsTest {
         assertEquals("p", body.getString("system"))
         assertEquals("default", body.getString("fallbacks"))
         val haiku = TextPolisher.anthropicRequest(LlmConfig(LlmProvider.ANTHROPIC, "u", "claude-haiku-5-5", "k", "p"), "t")
-        assertFalse(JSONObject(String(haiku.body!!)).has("fallbacks")) // Haiku rejects fallbacks
+        assertFalse(JSONObject(String(haiku.body!!)).has("fallbacks")) // Haiku has no server-side fallback
         assertFalse(haiku.headers.containsKey("anthropic-beta"))
         // thinking and fallback blocks are skipped, only text is used
         val response = JSONObject("""{"stop_reason":"end_turn","content":[{"type":"thinking","thinking":""},{"type":"text","text":"Hello."}]}""")

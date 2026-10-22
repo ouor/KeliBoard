@@ -59,7 +59,7 @@ object TextPolisher {
             "x-api-key" to config.apiKey,
             "anthropic-version" to "2023-06-01",
         )
-        // retries declined requests on another model server-side; Haiku rejects it
+        // retries declined requests on another model server-side; Haiku has none (a list returns 400)
         if (!config.model.startsWith("claude-haiku")) {
             body.put("fallbacks", "default")
             headers["anthropic-beta"] = "server-side-fallback-2026-07-01"
