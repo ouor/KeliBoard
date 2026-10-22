@@ -9,6 +9,8 @@ import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -144,7 +146,7 @@ class VoiceInputController(private val ime: LatinIME) {
     private fun showError(message: String) {
         // no showStatus(null) first: hiding posts a suggestion refresh that would cover the error
         handler.removeCallbacks(hideStatus)
-        ime.showVoiceInputStatus(statusView(ime.getString(R.string.voice_input_error, message), maxLines = 2))
+        ime.showVoiceInputStatus(statusView(ime.getString(R.string.voice_input_error, message)))
         handler.postDelayed(hideStatus, ERROR_DISPLAY_MILLIS)
     }
 
@@ -153,11 +155,13 @@ class VoiceInputController(private val ime: LatinIME) {
         ime.showVoiceInputStatus(textId?.let { statusView(ime.getString(it)) })
     }
 
-    // status messages stay on one line so the strip doesn't look crammed; errors may need a second line
-    private fun statusView(text: String, maxLines: Int = 1): View = TextView(ime).apply {
+    // always a single line, ellipsized, so the strip never grows or looks crammed
+    private fun statusView(text: String): View = TextView(ime).apply {
         this.text = text
+        // fill the strip height, otherwise the wrapper pins the text to the top
+        layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         gravity = Gravity.CENTER_VERTICAL
-        this.maxLines = maxLines
+        isSingleLine = true
         ellipsize = TextUtils.TruncateAt.END
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
         setTextColor(Settings.getValues().mColors.get(ColorType.SUGGESTED_WORD))
