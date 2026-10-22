@@ -1745,6 +1745,8 @@ public class LatinIME extends InputMethodService implements
             mHandler.postResumeSuggestions(false);
         } else {
             mSuggestionStripView.setExternalSuggestionView(view, true);
+            // the status is in the suggestion strip, which an expanded toolbar would cover
+            mSuggestionStripView.setToolbarVisibility(false);
         }
     }
 

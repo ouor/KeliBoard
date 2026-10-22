@@ -141,7 +141,8 @@ class VoiceInputController(private val ime: LatinIME) {
     }
 
     private fun showError(message: String) {
-        showStatus(null)
+        // no showStatus(null) first: hiding posts a suggestion refresh that would cover the error
+        handler.removeCallbacks(hideStatus)
         ime.showVoiceInputStatus(statusView(ime.getString(R.string.voice_input_error, message)))
         handler.postDelayed(hideStatus, ERROR_DISPLAY_MILLIS)
     }
