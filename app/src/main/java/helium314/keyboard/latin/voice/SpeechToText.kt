@@ -2,6 +2,7 @@
 package helium314.keyboard.latin.voice
 
 import android.net.Uri
+import org.json.JSONArray
 import org.json.JSONObject
 
 class SttConfig(
@@ -14,6 +15,9 @@ class SttConfig(
 )
 
 object SpeechToText {
+    // tried in order: universal-3-5-pro doesn't support Korean, universal-2 does
+    private val ASSEMBLYAI_DEFAULT_MODELS = listOf("universal-3-5-pro", "universal-2")
+
     /** Transcribes 16 kHz mono WAV audio. Blocking, call off the main thread. */
     fun transcribe(config: SttConfig, wav: ByteArray): String {
         val text = when (config.provider) {
@@ -26,7 +30,8 @@ object SpeechToText {
 
     internal fun openAiRequest(config: SttConfig, wav: ByteArray): VoiceRequest {
         val fields = linkedMapOf("model" to config.model, "response_format" to "json")
-        config.language?.let { fields["language"] = it }
+        // gpt-transcribe takes a list of languages instead of a single one
+        config.language?.let { fields[if (config.model.startsWith("gpt-transcribe")) "languages[]" else "language"] = it }
         val (contentType, body) = multipart(fields, "file", "audio.wav", "audio/wav", wav)
         val headers = mutableMapOf("Content-Type" to contentType)
         if (config.apiKey.isNotEmpty()) headers["Authorization"] = "Bearer ${config.apiKey}"
@@ -70,7 +75,8 @@ object SpeechToText {
 
     internal fun assemblyAiTranscriptRequest(config: SttConfig, audioUrl: String): VoiceRequest {
         val body = JSONObject().put("audio_url", audioUrl)
-        if (config.model.isNotEmpty()) body.put("speech_model", config.model)
+        val models = if (config.model.isNotEmpty()) listOf(config.model) else ASSEMBLYAI_DEFAULT_MODELS
+        body.put("speech_models", JSONArray(models))
         if (config.language == null) body.put("language_detection", true)
         else body.put("language_code", config.language)
         val headers = mapOf("Authorization" to config.apiKey, "Content-Type" to "application/json")

@@ -30,8 +30,10 @@ class VoiceRequestsTest {
         assertEquals("https://api.openai.com/v1/audio/transcriptions", request.url)
         assertEquals("Bearer k", request.headers["Authorization"])
         val body = String(request.body!!, Charsets.ISO_8859_1)
-        assertTrue(body.contains("name=\"model\"\r\n\r\ngpt-4o-mini-transcribe\r\n"))
-        assertTrue(body.contains("name=\"language\"\r\n\r\nko\r\n"))
+        assertTrue(body.contains("name=\"model\"\r\n\r\ngpt-transcribe\r\n"))
+        assertTrue(body.contains("name=\"languages[]\"\r\n\r\nko\r\n"))
+        val whisper = String(SpeechToText.openAiRequest(stt(SttProvider.GROQ), wav).body!!, Charsets.ISO_8859_1)
+        assertTrue(whisper.contains("name=\"language\"\r\n\r\nko\r\n"))
         assertTrue(body.contains("filename=\"audio.wav\""))
     }
 
@@ -57,7 +59,7 @@ class VoiceRequestsTest {
         val body = JSONObject(String(SpeechToText.assemblyAiTranscriptRequest(stt(SttProvider.ASSEMBLYAI), "u").body!!))
         assertEquals("u", body.getString("audio_url"))
         assertEquals("ko", body.getString("language_code"))
-        assertFalse(body.has("speech_model")) // empty default model is omitted
+        assertEquals("""["universal-3-5-pro","universal-2"]""", body.getJSONArray("speech_models").toString())
         assertNull(SpeechToText.parseAssemblyAi(JSONObject("""{"status":"processing"}""")))
         assertEquals("hi", SpeechToText.parseAssemblyAi(JSONObject("""{"status":"completed","text":"hi"}""")))
         assertEquals("", SpeechToText.parseAssemblyAi(JSONObject("""{"status":"completed","text":null}""")))
@@ -72,6 +74,11 @@ class VoiceRequestsTest {
         assertEquals("p", body.getJSONArray("messages").getJSONObject(0).getString("content"))
         assertEquals("text", body.getJSONArray("messages").getJSONObject(1).getString("content"))
         assertFalse(body.has("temperature"))
+        assertFalse(body.has("reasoning_effort"))
+        val luna = JSONObject(String(TextPolisher.openAiRequest(LlmConfig(LlmProvider.OPENAI, "u", "gpt-6-luna", "k", "p"), "t").body!!))
+        assertEquals("none", luna.getString("reasoning_effort"))
+        val oss = JSONObject(String(TextPolisher.openAiRequest(LlmConfig(LlmProvider.GROQ, "u", "openai/gpt-oss-20b", "k", "p"), "t").body!!))
+        assertFalse(oss.getBoolean("include_reasoning"))
         assertEquals("ok", TextPolisher.parseOpenAi(JSONObject("""{"choices":[{"message":{"content":"ok"}}]}""")))
     }
 
@@ -84,6 +91,9 @@ class VoiceRequestsTest {
         val body = JSONObject(String(request.body!!))
         assertEquals("p", body.getString("system"))
         assertEquals("default", body.getString("fallbacks"))
+        val haiku = TextPolisher.anthropicRequest(LlmConfig(LlmProvider.ANTHROPIC, "u", "claude-haiku-5-5", "k", "p"), "t")
+        assertFalse(JSONObject(String(haiku.body!!)).has("fallbacks")) // Haiku rejects fallbacks
+        assertFalse(haiku.headers.containsKey("anthropic-beta"))
         // thinking and fallback blocks are skipped, only text is used
         val response = JSONObject("""{"stop_reason":"end_turn","content":[{"type":"thinking","thinking":""},{"type":"text","text":"Hello."}]}""")
         assertEquals("Hello.", TextPolisher.parseAnthropic(response))

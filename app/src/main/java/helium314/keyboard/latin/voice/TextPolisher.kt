@@ -33,6 +33,11 @@ object TextPolisher {
             .put("messages", JSONArray()
                 .put(JSONObject().put("role", "system").put("content", config.prompt))
                 .put(JSONObject().put("role", "user").put("content", text)))
+        // reasoning models are slow by default; dictation cleanup needs little or no reasoning
+        when {
+            config.model.startsWith("gpt-6") -> body.put("reasoning_effort", "none")
+            config.model.contains("gpt-oss") -> body.put("reasoning_effort", "low").put("include_reasoning", false)
+        }
         val headers = mutableMapOf("Content-Type" to "application/json")
         if (config.apiKey.isNotEmpty()) headers["Authorization"] = "Bearer ${config.apiKey}"
         return VoiceRequest("${config.baseUrl.trimEnd('/')}/chat/completions", headers, body.toString().toByteArray())
@@ -47,16 +52,18 @@ object TextPolisher {
             .put("max_tokens", 16000)
             .put("system", config.prompt)
             .put("messages", JSONArray().put(JSONObject().put("role", "user").put("content", text)))
-            // retries declined requests on another model server-side
-            .put("fallbacks", "default")
             // low effort keeps latency acceptable while typing
             .put("output_config", JSONObject().put("effort", "low"))
-        val headers = mapOf(
+        val headers = mutableMapOf(
             "Content-Type" to "application/json",
             "x-api-key" to config.apiKey,
             "anthropic-version" to "2023-06-01",
-            "anthropic-beta" to "server-side-fallback-2026-07-01",
         )
+        // retries declined requests on another model server-side; Haiku rejects it
+        if (!config.model.startsWith("claude-haiku")) {
+            body.put("fallbacks", "default")
+            headers["anthropic-beta"] = "server-side-fallback-2026-07-01"
+        }
         return VoiceRequest("${config.baseUrl.trimEnd('/')}/messages", headers, body.toString().toByteArray())
     }
 
