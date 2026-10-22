@@ -1318,4 +1318,27 @@ New dictionary:
     <string name="gesture_data_swipe_o_scope">Tool for visualizing gesture data: &lt;a href=%s&gt;Swipe-O-Scope&lt;/a&gt;</string>
 
     <!-- new strings should go above the section for gesture data gathering -->
+    <string name="settings_screen_voice_input">Voice input</string>
+    <string name="voice_input_enable">Voice input with your own API key</string>
+    <string name="voice_input_enable_summary">The microphone key records speech and sends it to the speech-to-text service you choose. Requires internet.</string>
+    <string name="voice_input_stt_provider">Speech-to-text service</string>
+    <string name="voice_input_custom_provider">OpenAI-compatible server</string>
+    <string name="voice_input_api_key">API key</string>
+    <string name="voice_input_api_key_not_set">Not set</string>
+    <string name="voice_input_api_key_info">Stored only on this device and excluded from backups. Leave empty to remove.</string>
+    <string name="voice_input_base_url">Server URL</string>
+    <string name="voice_input_model">Model</string>
+    <string name="voice_input_use_keyboard_language">Use keyboard language</string>
+    <string name="voice_input_use_keyboard_language_summary">Tell the service the current keyboard language instead of detecting it</string>
+    <string name="voice_input_polish">AI cleanup</string>
+    <string name="voice_input_polish_summary">Fix punctuation and remove filler words with a language model before inserting</string>
+    <string name="voice_input_llm_provider">AI cleanup service</string>
+    <string name="voice_input_llm_prompt">Cleanup instructions</string>
+    <string name="voice_input_permission_needed">Allow microphone access to use voice input</string>
+    <string name="voice_input_not_configured">Voice input is not set up: %s is missing</string>
+    <string name="voice_input_listening">Listening… tap here or the mic key to finish</string>
+    <string name="voice_input_transcribing">Transcribing…</string>
+    <string name="voice_input_polishing">Cleaning up…</string>
+    <string name="voice_input_polish_failed">AI cleanup failed, original text inserted: %s</string>
+    <string name="voice_input_error">Voice input failed: %s</string>
 </resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<!-- voice input API keys must never leave the device -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="voice_api_keys.xml" />
+</full-backup-content>
