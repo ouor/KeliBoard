@@ -90,6 +90,8 @@ import helium314.keyboard.latin.utils.SubtypeLocaleUtils;
 import helium314.keyboard.latin.utils.SubtypeSettings;
 import helium314.keyboard.latin.utils.SubtypeState;
 import helium314.keyboard.latin.utils.ToolbarMode;
+import helium314.keyboard.latin.voice.VoiceInputController;
+import helium314.keyboard.settings.SettingsActivity;
 import helium314.keyboard.settings.SettingsActivity2;
 import kotlin.Unit;
 
@@ -146,6 +148,7 @@ public class LatinIME extends InputMethodService implements
     private Intent mPendingEmojiSearchResult;
 
     private RichInputMethodManager mRichImm;
+    private final VoiceInputController mVoiceInput = new VoiceInputController(this);
     final KeyboardSwitcher mKeyboardSwitcher;
     private final SubtypeState mSubtypeState = new SubtypeState((InputMethodSubtype subtype) -> { switchToSubtype(subtype); return Unit.INSTANCE; });
     private final StatsUtilsManager mStatsUtilsManager;
@@ -697,6 +700,7 @@ public class LatinIME extends InputMethodService implements
 
     @Override
     public void onDestroy() {
+        mVoiceInput.onDestroy();
         mClipboardHistoryManager.onDestroy();
         mDictionaryFacilitator.closeDictionaries();
         mSettings.onDestroy();
@@ -1045,6 +1049,7 @@ public class LatinIME extends InputMethodService implements
     void onFinishInputViewInternal(final boolean finishingInput) {
         super.onFinishInputView(finishingInput);
         Log.i(TAG, "onFinishInputView");
+        mVoiceInput.cancel();
         cleanupInternalStateForFinishInput();
     }
 
@@ -1421,7 +1426,10 @@ public class LatinIME extends InputMethodService implements
     // completely replace #onCodeInput.
     public void onEvent(@NonNull final Event event) {
         if (KeyCode.VOICE_INPUT == event.getKeyCode()) {
-            mRichImm.switchToShortcutIme(this);
+            if (mVoiceInput.isEnabled())
+                mVoiceInput.onVoiceKey();
+            else
+                mRichImm.switchToShortcutIme(this);
         }
         final InputTransaction completeInputTransaction =
                 mInputLogic.onCodeInput(mSettings.getCurrent(), event,
@@ -1602,6 +1610,7 @@ public class LatinIME extends InputMethodService implements
 
     @Override
     public void removeExternalSuggestions() {
+        mVoiceInput.cancel(); // close button on the voice input status
         setNeutralSuggestionStrip();
         mHandler.postResumeSuggestions(false);
     }
@@ -1728,7 +1737,24 @@ public class LatinIME extends InputMethodService implements
         return mClipboardHistoryManager;
     }
 
+    /** Shows voice input progress in the suggestion strip, or restores the strip if [view] is null. */
+    public void showVoiceInputStatus(@Nullable final View view) {
+        if (mSuggestionStripView == null) return;
+        if (view == null) {
+            setNeutralSuggestionStrip();
+            mHandler.postResumeSuggestions(false);
+        } else {
+            mSuggestionStripView.setExternalSuggestionView(view, true);
+            // the status is in the suggestion strip, which an expanded toolbar would cover
+            mSuggestionStripView.setToolbarVisibility(false);
+        }
+    }
+
     void launchSettings() {
+        launchSettings(null);
+    }
+
+    public void launchSettings(@Nullable final String destination) {
         mInputLogic.commitTyped(mSettings.getCurrent(), LastComposedWord.NOT_A_SEPARATOR);
         requestHideSelf(0);
         final MainKeyboardView mainKeyboardView = mKeyboardSwitcher.getMainKeyboardView();
@@ -1737,6 +1763,8 @@ public class LatinIME extends InputMethodService implements
         }
         final Intent intent = new Intent();
         intent.setClass(LatinIME.this, SettingsActivity2.class);
+        if (destination != null)
+            intent.putExtra(SettingsActivity.EXTRA_DESTINATION, destination);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -142,6 +142,20 @@ public final class Settings implements SharedPreferences.OnSharedPreferenceChang
     public static final String PREF_GESTURE_SPACE_AWARE = "gesture_space_aware";
     public static final String PREF_GESTURE_FAST_TYPING_COOLDOWN = "gesture_fast_typing_cooldown";
     public static final String PREF_GESTURE_TRAIL_FADEOUT_DURATION = "gesture_trail_fadeout_duration";
+
+    // voice input; base url, model and api key are stored per provider with "_<PROVIDER>" appended
+    public static final String PREF_VOICE_INPUT = "voice_input";
+    public static final String PREF_VOICE_STT_PROVIDER = "voice_stt_provider";
+    public static final String PREF_VOICE_STT_BASE_URL = "voice_stt_base_url";
+    public static final String PREF_VOICE_STT_MODEL = "voice_stt_model";
+    public static final String PREF_VOICE_STT_API_KEY = "voice_stt_api_key";
+    public static final String PREF_VOICE_USE_KEYBOARD_LANGUAGE = "voice_use_keyboard_language";
+    public static final String PREF_VOICE_POLISH = "voice_polish";
+    public static final String PREF_VOICE_LLM_PROVIDER = "voice_llm_provider";
+    public static final String PREF_VOICE_LLM_BASE_URL = "voice_llm_base_url";
+    public static final String PREF_VOICE_LLM_MODEL = "voice_llm_model";
+    public static final String PREF_VOICE_LLM_API_KEY = "voice_llm_api_key";
+    public static final String PREF_VOICE_LLM_PROMPT = "voice_llm_prompt";
     public static final String PREF_SHOW_SETUP_WIZARD_ICON = "show_setup_wizard_icon";
     public static final String PREF_USE_CONTACTS = "use_contacts";
     public static final String PREF_USE_APPS = "use_apps";

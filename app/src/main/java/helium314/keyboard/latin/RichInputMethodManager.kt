@@ -23,6 +23,7 @@ import helium314.keyboard.latin.utils.SubtypeSettings
 import helium314.keyboard.latin.utils.getSecondaryLocales
 import helium314.keyboard.latin.utils.locale
 import helium314.keyboard.latin.utils.prefs
+import helium314.keyboard.latin.voice.VoiceSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,6 +56,9 @@ class RichInputMethodManager private constructor() {
     private var shortcuts = listOf<Shortcut>()
 
     val isShortcutImeReady get() = shortcuts.isNotEmpty()
+
+    /** Whether the mic key does something: built-in voice input or switching to a voice IME. */
+    val hasVoiceInput get() = isShortcutImeReady || VoiceSettings.isEnabled(context)
 
     fun getEnabledInputMethodSubtypes(imi: InputMethodInfo, allowsImplicitlySelectedSubtypes: Boolean) =
         inputMethodInfoCache.getEnabledInputMethodSubtypeList(imi, allowsImplicitlySelectedSubtypes)

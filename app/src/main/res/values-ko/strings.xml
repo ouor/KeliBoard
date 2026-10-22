@@ -690,4 +690,27 @@
     <string name="emoji_search_title">이모지 검색</string>
     <string name="search_field_placeholder">검색</string>
     <string name="ask_later">나중에 묻기</string>
+    <string name="settings_screen_voice_input">음성 입력</string>
+    <string name="voice_input_enable">내 API 키로 음성 입력</string>
+    <string name="voice_input_enable_summary">마이크 키로 녹음한 음성을 선택한 음성 인식 서비스로 보내 텍스트로 바꿉니다. 인터넷 연결이 필요합니다.</string>
+    <string name="voice_input_stt_provider">음성 인식 서비스</string>
+    <string name="voice_input_custom_provider">OpenAI 호환 서버</string>
+    <string name="voice_input_api_key">API 키</string>
+    <string name="voice_input_api_key_not_set">설정되지 않음</string>
+    <string name="voice_input_api_key_info">이 기기에만 저장되며 백업에서 제외됩니다. 비워 두면 삭제됩니다.</string>
+    <string name="voice_input_base_url">서버 URL</string>
+    <string name="voice_input_model">모델</string>
+    <string name="voice_input_use_keyboard_language">키보드 언어 사용</string>
+    <string name="voice_input_use_keyboard_language_summary">언어를 자동 감지하지 않고 현재 키보드 언어를 서비스에 알려줍니다</string>
+    <string name="voice_input_polish">AI 다듬기</string>
+    <string name="voice_input_polish_summary">입력하기 전에 언어 모델로 문장 부호를 고치고 군더더기 말을 없앱니다</string>
+    <string name="voice_input_llm_provider">AI 다듬기 서비스</string>
+    <string name="voice_input_llm_prompt">다듬기 지시문</string>
+    <string name="voice_input_permission_needed">음성 입력을 사용하려면 마이크 권한을 허용하세요</string>
+    <string name="voice_input_not_configured">음성 입력 설정이 완료되지 않았습니다: %s 없음</string>
+    <string name="voice_input_listening">듣는 중… 탭하면 완료</string>
+    <string name="voice_input_transcribing">텍스트로 변환 중…</string>
+    <string name="voice_input_polishing">다듬는 중…</string>
+    <string name="voice_input_polish_failed">AI 다듬기에 실패해 원문을 입력했습니다: %s</string>
+    <string name="voice_input_error">음성 입력 실패: %s</string>
 </resources>

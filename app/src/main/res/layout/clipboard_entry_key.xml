@@ -22,9 +22,8 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="6dp"
-        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="10dp"
+        android:layout_marginHorizontal="12dp"
         android:hapticFeedbackEnabled="false"
         android:soundEffectsEnabled="false"
         android:orientation="vertical">
@@ -40,7 +39,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLines="4"/>
+            android:lineSpacingExtra="2dp"
+            android:maxLines="3"/>
     </LinearLayout>
 
 </LinearLayout>

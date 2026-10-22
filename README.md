@@ -7,7 +7,7 @@ It keeps the privacy-conscious, offline, and deeply customizable foundation of H
 
 Korean support is a flagship feature, not the limit of the project. KeliBoard is built for everyone who wants a dependable, configurable Android keyboard.
 
-[Download the latest APK](https://github.com/GPLaider/KeliBoard/releases/latest)
+[Download the latest APK](https://github.com/ouor/KeliBoard/releases/latest)
 
 ## Why KeliBoard?
 
@@ -15,8 +15,9 @@ Korean support is a flagship feature, not the limit of the project. KeliBoard is
 - Android 16 stability fixes and real-device regression testing
 - UI and theme fixes that improve visibility and consistency
 - Better punctuation, suggestion, popup-key, and emoji-search behavior
+- A cleaner default look: flat rounded keys in your system colors, a tidy toolbar, and a visible language key
 - First-class Korean support, including a Samsung-style Cheonjiin layout
-- Fully offline operation with no internet permission
+- Works fully offline; the internet is only used by opt-in voice input with your own speech-to-text API key (OpenAI, Groq, Deepgram, AssemblyAI or any OpenAI-compatible server), with optional AI cleanup
 - The customization and privacy model inherited from HeliBoard
 
 ## First-class Korean support
@@ -33,6 +34,30 @@ KeliBoard treats Korean as a complete input experience rather than a layout chec
 - Normal English QWERTY with Shift and Caps Lock on the lock screen
 - Key labels sized and arranged for familiar Korean phone use
 
+## A cleaner default look
+
+New installs start with a calmer design inspired by [Fossify Keyboard](https://github.com/FossifyOrg/Keyboard):
+
+- Flat rounded keys with no bevel; function keys match the letter keys and Enter uses a saturated accent with a white icon
+- Dynamic (Material You) colors on Android 12 and later, light and dark themes on older versions
+- A toolbar with only voice, clipboard and settings pinned next to the suggestions; the expand arrow opens just the editing tools (undo, redo, select word, copy, paste)
+- A language key next to the space bar whenever more than one language is enabled (long-pressing space still opens the language list)
+- A simpler clipboard view with a close button, title and trash can, and roomier clip cards
+
+Every part stays customizable under Settings → Appearance and Toolbar: other styles and color themes, key borders, your own colors, key size and spacing, and toolbar keys.
+
+## Voice input with your own API key
+
+Voice input is off by default and is the only feature that uses the internet.
+
+1. Open Settings → Voice input and turn it on (KeliBoard asks for microphone permission).
+2. Pick a speech-to-text service and enter your API key. Supported: OpenAI, Groq, Deepgram, AssemblyAI, or any OpenAI-compatible server (for example a self-hosted Whisper).
+3. Tap the microphone in the toolbar to start, then tap it or the status text to finish. The X button cancels.
+
+Optionally, an AI model (OpenAI, Anthropic Claude, Google Gemini, Groq, or an OpenAI-compatible server) can clean up punctuation and filler words before the text is inserted. If the cleanup fails, the raw transcription is kept.
+
+Recordings go only to the services you configure. API keys stay on the device and are excluded from settings backups, Android cloud backup and device transfer. Server URL and model can be changed per service.
+
 ## Core features
 
 - Dictionaries for suggestions and spell checking
@@ -42,6 +67,7 @@ KeliBoard treats Korean as a complete input experience rather than a layout chec
 - Multilingual typing
 - Optional glide typing with a separately supplied compatible library
 - Clipboard history
+- Opt-in voice input with your own speech-to-text API key
 - One-handed, split, floating, numpad, and D-pad modes
 - Settings and learned-data backup and restore
 
@@ -49,15 +75,15 @@ See [layouts.md](layouts.md) for custom layout documentation. The upstream [Heli
 
 ## Installation
 
-Download the current build from [GitHub Releases](https://github.com/GPLaider/KeliBoard/releases/latest).
+Download the current build from [GitHub Releases](https://github.com/ouor/KeliBoard/releases/latest).
 
-KeliBoard 4.0-ko-preview5 and later use the independent `io.github.gplaider.keliboard` application ID. They can coexist with official HeliBoard and earlier KeliBoard previews.
+KeliBoard 4.1.0 and later use the `io.github.ouor.keliboard` application ID and their own signing key. They install as a separate app next to official HeliBoard and earlier KeliBoard builds (`io.github.gplaider.keliboard`), so they cannot update those in place.
 
 Android does not migrate app data between application IDs. Before switching, back up settings in the earlier app and restore that backup in KeliBoard.
 
 ## Reporting issues
 
-Report KeliBoard bugs and feature requests in [KeliBoard Issues](https://github.com/GPLaider/KeliBoard/issues).
+Report KeliBoard bugs and feature requests in [KeliBoard Issues](https://github.com/ouor/KeliBoard/issues).
 
 Please include:
 
@@ -90,3 +116,4 @@ KeliBoard is licensed under the [GNU General Public License v3.0](LICENSE). The 
 - [OpenBoard](https://github.com/openboard-team/openboard)
 - [AOSP LatinIME](https://android.googlesource.com/platform/packages/inputmethods/LatinIME/)
 - LineageOS, Simple Keyboard, Indic Keyboard, and FlorisBoard contributors
+- [Fossify Keyboard](https://github.com/FossifyOrg/Keyboard), which inspired the default key design

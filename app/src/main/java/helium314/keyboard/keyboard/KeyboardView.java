@@ -469,7 +469,9 @@ public class KeyboardView extends View {
             blendAlpha(paint, params.mAnimAlpha);
             final float labelCharHeight = TypefaceUtils.getReferenceCharHeight(paint);
             final float labelCharWidth = TypefaceUtils.getReferenceCharWidth(paint);
-            final boolean isFunctionalKeyAndRoundedStyle = mColors.getThemeStyle().equals(STYLE_ROUNDED) && key.hasFunctionalBackground();
+            // with key borders the rounded style has flat rounded rectangles, so hints need no inset for a pill shape
+            final boolean isFunctionalKeyAndRoundedStyle = mColors.getThemeStyle().equals(STYLE_ROUNDED) && !mColors.getHasKeyBorders()
+                    && key.hasFunctionalBackground();
             final float hintX, hintBaseline;
             if (key.hasHintLabel()) {
                 // The hint label is placed just right of the key label. Used mainly on
@@ -508,7 +510,8 @@ public class KeyboardView extends View {
             canvas.drawText(hintLabel, 0, hintLabel.length(), hintX, hintBaseline + adjustmentY, paint);
         } else if (hintIcon != null) {
             int iconSize = (int) (key.selectHintTextSize(params) * mHintFontSizeMultiplier);
-            boolean isFunctionalKeyAndRoundedStyle = mColors.getThemeStyle().equals(STYLE_ROUNDED) && (key.hasFunctionalBackground() || key.hasActionKeyBackground());
+            boolean isFunctionalKeyAndRoundedStyle = mColors.getThemeStyle().equals(STYLE_ROUNDED) && !mColors.getHasKeyBorders()
+                    && (key.hasFunctionalBackground() || key.hasActionKeyBackground());
             float hintX, hintBaseline;
             if (key.hasHintLabel()) {
                 // The hint icon is placed just right of the key label. Used mainly on "phone number" layout.

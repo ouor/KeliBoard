@@ -49,10 +49,12 @@ class ClipboardLayoutParams(ctx: Context) {
 
     fun setItemProperties(view: View) {
         (view.layoutParams as RecyclerView.LayoutParams).apply {
-            topMargin = keyHorizontalGap / 2
-            bottomMargin = keyVerticalGap / 2
-            marginStart = keyHorizontalGap / 2
-            marginEnd = keyHorizontalGap / 2
+            // at least 4dp between clips, the key gaps can be very small
+            val minMargin = (4 * view.resources.displayMetrics.density).toInt()
+            topMargin = maxOf(keyHorizontalGap / 2, minMargin)
+            bottomMargin = maxOf(keyVerticalGap / 2, minMargin)
+            marginStart = maxOf(keyHorizontalGap / 2, minMargin)
+            marginEnd = maxOf(keyHorizontalGap / 2, minMargin)
             view.layoutParams = this
         }
     }

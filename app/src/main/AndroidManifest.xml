@@ -16,6 +16,9 @@ SPDX-License-Identifier: Apache-2.0 AND GPL-3.0-only
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+    <!-- only used for the opt-in voice input with the user's own speech-to-text API key -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application android:label="@string/english_ime_name"
             android:name="helium314.keyboard.latin.App"
@@ -23,6 +26,8 @@ SPDX-License-Identifier: Apache-2.0 AND GPL-3.0-only
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:allowBackup="true"
+            android:fullBackupContent="@xml/backup_rules"
+            android:dataExtractionRules="@xml/data_extraction_rules"
             android:defaultToDeviceProtectedStorage="true"
             android:directBootAware="true"
             android:enableOnBackInvokedCallback="true"
