@@ -1336,7 +1336,7 @@ New dictionary:
     <string name="voice_input_llm_prompt">Cleanup instructions</string>
     <string name="voice_input_permission_needed">Allow microphone access to use voice input</string>
     <string name="voice_input_not_configured">Voice input is not set up: %s is missing</string>
-    <string name="voice_input_listening">Listening… tap here or the mic key to finish</string>
+    <string name="voice_input_listening">Listening… tap to finish</string>
     <string name="voice_input_transcribing">Transcribing…</string>
     <string name="voice_input_polishing">Cleaning up…</string>
     <string name="voice_input_polish_failed">AI cleanup failed, original text inserted: %s</string>

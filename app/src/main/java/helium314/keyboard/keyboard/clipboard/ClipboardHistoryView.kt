@@ -33,10 +33,8 @@ import helium314.keyboard.latin.settings.Settings
 import helium314.keyboard.latin.utils.ResourceUtils
 import helium314.keyboard.latin.utils.ToolbarKey
 import helium314.keyboard.latin.utils.createToolbarKey
-import helium314.keyboard.latin.utils.getEnabledClipboardToolbarKeys
 import helium314.keyboard.latin.utils.onClickToolbarKey
 import helium314.keyboard.latin.utils.onLongClickToolbarKey
-import helium314.keyboard.latin.utils.prefs
 import helium314.keyboard.latin.utils.setToolbarButtonsActivatedStateOnPrefChange
 
 @SuppressLint("CustomViewStyleable")
@@ -69,7 +67,8 @@ class ClipboardHistoryView @JvmOverloads constructor(
         val keyboardViewAttr = context.obtainStyledAttributes(attrs, R.styleable.KeyboardView, defStyle, R.style.KeyboardView)
         keyBackgroundId = keyboardViewAttr.getResourceId(R.styleable.KeyboardView_keyBackground, 0)
         keyboardViewAttr.recycle()
-        getEnabledClipboardToolbarKeys(context.prefs())
+        // fixed header like Fossify Keyboard: close, title, clear
+        listOf(ToolbarKey.CLOSE_HISTORY, ToolbarKey.CLEAR_CLIPBOARD)
             .forEach { toolbarKeys.add(createToolbarKey(context, it)) }
         fitsSystemWindows = true
     }
@@ -108,6 +107,15 @@ class ClipboardHistoryView @JvmOverloads constructor(
             colors.setColor(it, ColorType.TOOL_BAR_KEY)
             colors.setBackground(it, ColorType.STRIP_BACKGROUND)
         }
+        val title = TextView(context).apply {
+            setText(R.string.clipboard)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            setTextColor(colors.get(ColorType.KEY_TEXT))
+            gravity = android.view.Gravity.CENTER_VERTICAL
+            setPadding(resources.getDimensionPixelSize(R.dimen.config_suggestions_strip_edge_key_width) / 4, 0, 0, 0)
+            layoutParams = LayoutParams(0, LayoutParams.MATCH_PARENT, 1f)
+        }
+        clipboardStrip.addView(title, 1)
     }
 
     private fun setupClipKey(params: KeyDrawParams) {
@@ -115,7 +123,7 @@ class ClipboardHistoryView @JvmOverloads constructor(
             itemBackgroundId = keyBackgroundId
             itemTypeFace = params.mTypeface
             itemTextColor = params.mTextColor
-            itemTextSize = params.mLabelSize.toFloat()
+            itemTextSize = params.mLabelSize * 0.8f // smaller than key labels so clips don't look crammed
         }
     }
 
@@ -124,7 +132,6 @@ class ClipboardHistoryView @JvmOverloads constructor(
         val toolbarKeyLayoutParams = LayoutParams(
             resources.getDimensionPixelSize(R.dimen.config_suggestions_strip_edge_key_width),
             LayoutParams.MATCH_PARENT,
-            1f,
         )
         toolbarKeys.forEach { it.layoutParams = toolbarKeyLayoutParams }
     }

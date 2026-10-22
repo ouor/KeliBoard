@@ -5,6 +5,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
+import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -143,7 +144,7 @@ class VoiceInputController(private val ime: LatinIME) {
     private fun showError(message: String) {
         // no showStatus(null) first: hiding posts a suggestion refresh that would cover the error
         handler.removeCallbacks(hideStatus)
-        ime.showVoiceInputStatus(statusView(ime.getString(R.string.voice_input_error, message)))
+        ime.showVoiceInputStatus(statusView(ime.getString(R.string.voice_input_error, message), maxLines = 2))
         handler.postDelayed(hideStatus, ERROR_DISPLAY_MILLIS)
     }
 
@@ -152,10 +153,12 @@ class VoiceInputController(private val ime: LatinIME) {
         ime.showVoiceInputStatus(textId?.let { statusView(ime.getString(it)) })
     }
 
-    private fun statusView(text: String): View = TextView(ime).apply {
+    // status messages stay on one line so the strip doesn't look crammed; errors may need a second line
+    private fun statusView(text: String, maxLines: Int = 1): View = TextView(ime).apply {
         this.text = text
         gravity = Gravity.CENTER_VERTICAL
-        maxLines = 2
+        this.maxLines = maxLines
+        ellipsize = TextUtils.TruncateAt.END
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
         setTextColor(Settings.getValues().mColors.get(ColorType.SUGGESTED_WORD))
         val padding = (12 * resources.displayMetrics.density).toInt()
